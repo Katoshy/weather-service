@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: weather
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # підтягуються з .env
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
+      # ...
+    depends_on:
+      - db
+
+volumes:
+  db-data:
