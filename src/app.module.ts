@@ -1,31 +1,40 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Subscription } from './modules/subscription/subscription.entity';
-import { SubscriptionModule } from './subscription/subscription.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { WeatherModule } from './weather/weather.module';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { EmailModule } from './email/email.module';
+import { SchedulerModule } from './scheduler/scheduler.module';
+import { Subscription } from './subscription/entities/subscription.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    SubscriptionModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: +process.env.DATABASE_PORT,
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      migrations: [__dirname + '/migrations/*{.ts,.js}'],
-      synchronize: false,      // ніколи не вмикайте в проді!
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
-    TypeOrmModule.forFeature([Subscription]),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST', 'localhost'),
+        port: configService.get<number>('DB_PORT', 5432),
+        username: configService.get('DB_USERNAME', 'postgres'),
+        password: configService.get('DB_PASSWORD', 'postgres'),
+        database: configService.get('DB_DATABASE', 'weather_forecast'),
+        entities: [Subscription],
+        migrations: ['dist/database/migrations/*.js'],
+        migrationsRun: true,
+        synchronize: false,
+      }),
+    }),
+    ScheduleModule.forRoot(),
     WeatherModule,
+    SubscriptionModule,
+    EmailModule,
+    SchedulerModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
