@@ -1,24 +1,53 @@
 version: '3.8'
-services:
-  db:
-    image: postgres:14
-    environment:
-      POSTGRES_DB: weather
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
 
-  app:
-    build: .
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: weather-forecast-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: weather_forecast
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - weather-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: weather-forecast-api
+    restart: always
     ports:
       - "3000:3000"
-    environment:
-      # підтягуються з .env
-      WEATHER_API_KEY: ${WEATHER_API_KEY}
-      # ...
     depends_on:
-      - db
+      - postgres
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      BASE_URL: http://localhost:3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: weather_forecast
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_SECURE: ${EMAIL_SECURE}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      EMAIL_FROM: ${EMAIL_FROM}
+    networks:
+      - weather-network
 
 volumes:
-  db-data:
+  postgres_data:
+
+networks:
+  weather-network:
+    driver: bridge
