@@ -46,8 +46,8 @@ services:
     networks:
       - weather-network
     volumes:
-      - .:/usr/src/app                # монтуємо весь локальний код
-      - /usr/src/app/node_modules     # щоб зберегти встановлені в контейнері залежності
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
 volumes:
   postgres_data:
