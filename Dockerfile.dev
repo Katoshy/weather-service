@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+# Копіюємо тільки package-файли, щоб кешувати залежності
+COPY package*.json ./
+
+RUN npm install
+
+# Для nest-cli live-reload (якщо потрібно)
+RUN npm install -g @nestjs/cli
+
+# Тепер підмонтуємо решту коду через volume
+EXPOSE 3000
+
+CMD ["npm", "run", "start:dev"]
