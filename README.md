@@ -1,11 +1,11 @@
-### Weather Forecast API
+# Weather Forecast API
 
 # ⚙️ Implementation and Architecture
 
 The project uses a modular NestJS architecture.
 Modules Overview:
 
-1. # weather/ – Weather Module
+### 1. weather/ – Weather Module
 
 weather.service.ts: Handles fetching and processing weather data via Axios.
 
@@ -15,7 +15,7 @@ interfaces/: Type definitions for external API responses.
 
 dto/: Data Transfer Objects (DTOs) for validating requests.
 
-2. # subscription/ – Subscription Module
+### 2. subscription/ – Subscription Module
 
 subscription.service.ts: Manages CRUD operations for email subscriptions.
 
@@ -29,13 +29,13 @@ entities/: TypeORM entities defining database schema.
 
 dto/: DTOs for input validation.
 
-3. # email/ – Email Module
+### 3. email/ – Email Module
 
 email.service.ts: Sends emails using Nodemailer.
 
 SMTP credentials are securely managed through .env configuration.
 
-4. # scheduler/ – Scheduler Module
+### 4. scheduler/ – Scheduler Module
 
 scheduler.service.ts: Utilizes @nestjs/schedule to automate daily email dispatches (e.g., via cron jobs).
 
@@ -47,24 +47,24 @@ Database configuration is managed in src/database/typeorm-config.ts.
 
 Migrations stored in src/database/migrations/.
 
-# Docker Setup
+### Docker Setup
 
 The application uses Docker for consistency across development and deployment environments:
 
-# Start Docker containers
+### Start Docker containers
 docker-compose up --build
 
-# Run database migrations
+### Run database migrations
 docker exec -it weather-forecast-api npm run migration:run
 
-🧪 Testing
+# 🧪 Testing
 
 Testing is done using Jest, with both unit and end-to-end (e2e) tests:
 
-# Run unit tests
+### Run unit tests
 npm run test
 
-# Run end-to-end tests
+### Run end-to-end tests
 npm run test:e2e
 
 # 🔧 Useful NPM Scripts
@@ -82,7 +82,7 @@ http://localhost:3000/api/docs
 
 # 🚀 Deployment Options
 
-# Development Deployment
+### Development Deployment
 
 Docker-compose is used for quick setup and local testing.
 
@@ -90,7 +90,7 @@ Continuous hot-reload for fast development.
 
 Run migrations easily within the Docker environment.
 
-# Production Deployment
+### Production Deployment
 
 Deploy using Docker containers on cloud platforms (AWS, Azure, DigitalOcean).
 
